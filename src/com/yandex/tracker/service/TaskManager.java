@@ -1,3 +1,7 @@
+package com.yandex.tracker.service;
+
+import com.yandex.tracker.model.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +12,8 @@ public class TaskManager {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private int idCounter = 0;
 
-    public int generateId() {
+    // Приватный метод для генерации ID
+    private int generateId() {
         return ++idCounter;
     }
 
@@ -37,6 +42,7 @@ public class TaskManager {
         subtasks.clear();
         for (Epic epic : epics.values()) {
             epic.getSubtaskIds().clear();
+            updateEpicStatus(epic);
         }
     }
 
@@ -53,14 +59,19 @@ public class TaskManager {
     }
 
     public void createTask(Task task) {
-        tasks.put(task.getId(), task);
+        int id = generateId();
+        task.setId(id);
+        tasks.put(id, task);
     }
 
     public void createEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        int id = generateId();
+        epic.setId(id);
+        epics.put(id, epic);
     }
 
     public void createSubtask(Subtask subtask) {
+        subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
@@ -70,19 +81,24 @@ public class TaskManager {
     }
 
     public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        if (tasks.containsKey(task.getId())) {
+            tasks.put(task.getId(), task);
+        }
     }
 
     public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
-        updateEpicStatus(epic);
+        if (epics.containsKey(epic.getId())) {
+            epics.put(epic.getId(), epic);
+        }
     }
 
     public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        Epic epic = epics.get(subtask.getEpicId());
-        if (epic != null) {
-            updateEpicStatus(epic);
+        if (subtasks.containsKey(subtask.getId())) {
+            subtasks.put(subtask.getId(), subtask);
+            Epic epic = epics.get(subtask.getEpicId());
+            if (epic != null) {
+                updateEpicStatus(epic);
+            }
         }
     }
 
