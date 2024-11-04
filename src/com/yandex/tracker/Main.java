@@ -1,12 +1,15 @@
 package com.yandex.tracker;
 
-import com.yandex.tracker.model.*;
-import com.yandex.tracker.service.TaskStatus;
+import com.yandex.tracker.model.Epic;
+import com.yandex.tracker.model.Subtask;
+import com.yandex.tracker.model.Task;
+import com.yandex.tracker.service.Managers;
 import com.yandex.tracker.service.TaskManager;
+import com.yandex.tracker.service.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        TaskManager manager = Managers.getDefault();
 
         // Создание задач
         Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
@@ -22,15 +25,8 @@ public class Main {
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
 
-        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
-        manager.createEpic(epic2);
-        Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", TaskStatus.IN_PROGRESS, epic2.getId());
-        manager.createSubtask(subtask3);
-
-        // Вывод всех задач, эпиков и подзадач
-        System.out.println("Задачи: " + manager.getAllTasks());
-        System.out.println("Эпики: " + manager.getAllEpics());
-        System.out.println("Подзадачи: " + manager.getAllSubtasks());
+        // Вывод всех задач и истории
+        printAllTasks(manager);
 
         // Изменение статусов и вывод
         task1.setStatus(TaskStatus.DONE);
@@ -38,16 +34,37 @@ public class Main {
         subtask1.setStatus(TaskStatus.DONE);
         manager.updateSubtask(subtask1);
 
-        System.out.println("Обновленные задачи: " + manager.getAllTasks());
-        System.out.println("Обновленные эпики: " + manager.getAllEpics());
-        System.out.println("Обновленные подзадачи: " + manager.getAllSubtasks());
+        System.out.println("\nОбновленные задачи:");
+        printAllTasks(manager);
 
         // Удаление задачи и эпика
         manager.deleteTaskById(task2.getId());
         manager.deleteEpicById(epic1.getId());
 
-        System.out.println("После удаления - Задачи: " + manager.getAllTasks());
-        System.out.println("После удаления - Эпики: " + manager.getAllEpics());
-        System.out.println("После удаления - Подзадачи: " + manager.getAllSubtasks());
+        System.out.println("\nПосле удаления:");
+        printAllTasks(manager);
+    }
+
+    private static void printAllTasks(TaskManager manager) {
+        System.out.println("Задачи:");
+        for (Task task : manager.getAllTasks()) {
+            System.out.println(task);
+        }
+        System.out.println("Эпики:");
+        for (Epic epic : manager.getAllEpics()) {
+            System.out.println(epic);
+            for (Subtask subtask : manager.getSubtasksOfEpic(epic.getId())) {
+                System.out.println("--> " + subtask);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (Subtask subtask : manager.getAllSubtasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
