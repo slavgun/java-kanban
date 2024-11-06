@@ -134,7 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void addToHistory(Task task) {
         if (history.size() >= 10) {
-            history.remove(0); // Удаляем самый старый элемент
+            history.remove(0);
         }
         history.add(task);
     }
