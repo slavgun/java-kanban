@@ -1,5 +1,7 @@
 package com.yandex.tracker.test;
 
+import com.yandex.tracker.model.Epic;
+import com.yandex.tracker.model.Subtask;
 import com.yandex.tracker.model.Task;
 import com.yandex.tracker.service.Managers;
 import com.yandex.tracker.service.TaskManager;
@@ -17,32 +19,68 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void inMemoryTaskManagerShouldAddTasksAndFindById() {
+    void shouldAddTaskAndRetrieveById() {
         Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
         taskManager.createTask(task);
-        Task foundTask = taskManager.getTaskById(task.getId());
-        assertNotNull(foundTask, "Task should be found by ID.");
-        assertEquals(task, foundTask, "Found task should be equal to the created task.");
+
+        Task retrievedTask = taskManager.getTaskById(task.getId());
+        assertNotNull(retrievedTask, "Task should be found by ID.");
+        assertEquals(task, retrievedTask, "Retrieved task should be equal to the created task.");
     }
 
     @Test
-    void tasksWithSameIdShouldNotConflict() {
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
-        assertNotEquals(task1.getId(), task2.getId(), "Tasks should have different IDs.");
+    void shouldUpdateTask() {
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        taskManager.createTask(task);
+
+        task.setTitle("Updated Task 1");
+        taskManager.updateTask(task);
+
+        Task updatedTask = taskManager.getTaskById(task.getId());
+        assertEquals("Updated Task 1", updatedTask.getTitle(), "Task title should be updated.");
     }
 
     @Test
-    void taskShouldNotChangeWhenAddedToManager() {
+    void shouldAddEpicAndRetrieveById() {
+        Epic epic = new Epic("Epic 1", "Description 1");
+        taskManager.createEpic(epic);
+
+        Epic retrievedEpic = taskManager.getEpicById(epic.getId());
+        assertNotNull(retrievedEpic, "Epic should be found by ID.");
+        assertEquals(epic, retrievedEpic, "Retrieved epic should be equal to the created epic.");
+    }
+
+    @Test
+    void shouldAddSubtaskToEpic() {
+        Epic epic = new Epic("Epic 1", "Description 1");
+        taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
+        taskManager.createSubtask(subtask);
+
+        assertEquals(1, taskManager.getSubtasksOfEpic(epic.getId()).size(), "Epic should have one subtask.");
+    }
+
+    @Test
+    void shouldMaintainHistory() {
         Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
         taskManager.createTask(task);
-        int originalId = task.getId();
-        String originalTitle = task.getTitle();
-        String originalDescription = task.getDescription();
-        Task savedTask = taskManager.getTaskById(originalId);
-        assertEquals(originalTitle, savedTask.getTitle(), "Task title should remain the same.");
-        assertEquals(originalDescription, savedTask.getDescription(), "Task description should remain the same.");
+
+        // Access the task to add it to history
+        taskManager.getTaskById(task.getId());
+
+        assertEquals(1, taskManager.getHistory().size(), "History should contain one task.");
+        assertEquals(task, taskManager.getHistory().get(0), "History should contain the correct task.");
+    }
+
+    @Test
+    void shouldLimitHistoryToTenTasks() {
+        for (int i = 1; i <= 12; i++) {
+            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW);
+            taskManager.createTask(task);
+            taskManager.getTaskById(task.getId()); // Accessing to add to history
+        }
+
+        assertEquals(10, taskManager.getHistory().size(), "History should contain only the last 10 tasks.");
     }
 }
