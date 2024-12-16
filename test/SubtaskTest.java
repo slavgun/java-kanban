@@ -10,13 +10,11 @@ class SubtaskTest {
     @Test
     void subtaskShouldNotBeItsOwnEpic() {
         Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, 1);
-        subtask.setId(1); // Устанавливаем ID подзадачи
-
+        subtask.setId(1); // Устанавливаем ID
         assertThrows(IllegalArgumentException.class, () -> {
-            new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, subtask.getId());
-        }, "Subtask cannot be its own epic.");
+            subtask.setEpicId(1); // Пробуем установить себя как epicId
+        });
     }
-
 
     @Test
     void subtaskShouldRetainDataAfterCreation() {

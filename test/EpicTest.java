@@ -11,12 +11,12 @@ class EpicTest {
     @Test
     void epicShouldNotAddItselfAsSubtask() {
         Epic epic = new Epic("Epic 1", "Description 1");
-        epic.setId(1); // Устанавливаем ID эпика
-
+        epic.setId(1); // Устанавливаем ID
         assertThrows(IllegalArgumentException.class, () -> {
-            epic.addSubtaskId(1); // Попытка добавить себя как подзадачу
-        }, "Epic cannot be added as its own subtask.");
+            epic.addSubtaskId(1); // Добавляем себя как подзадачу
+        });
     }
+
 
     @Test
     void epicShouldRetainDataAfterCreation() {
