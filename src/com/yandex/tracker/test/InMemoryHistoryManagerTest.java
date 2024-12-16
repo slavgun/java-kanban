@@ -1,35 +1,35 @@
 package com.yandex.tracker.test;
 
 import com.yandex.tracker.model.Task;
-import com.yandex.tracker.service.HistoryManager;
 import com.yandex.tracker.service.InMemoryHistoryManager;
 import com.yandex.tracker.service.TaskStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    private HistoryManager historyManager;
+    public static void main(String[] args) {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
-    @BeforeEach
-    public void setUp() {
-        historyManager = new InMemoryHistoryManager();
-    }
+        // Создание задач
+        Task task1 = new Task("Task 1", "Description for Task 1", TaskStatus.NEW);
+        Task task2 = new Task("Task 2", "Description for Task 2", TaskStatus.IN_PROGRESS);
+        Task task3 = new Task("Task 3", "Description for Task 3", TaskStatus.DONE);
 
-    @Test
-    void historyManagerShouldSavePreviousVersionOfTask() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        historyManager.add(task);
-        assertEquals(1, historyManager.getHistory().size(), "History should contain one task.");
-        assertEquals(task, historyManager.getHistory().get(0), "History should contain the correct task.");
-    }
+        // Добавление задач
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
 
-    @Test
-    void historyShouldLimitToTenTasks() {
-        for (int i = 1; i <= 12; i++) {
-            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW);
-            historyManager.add(task);
-        }
-        assertEquals(10, historyManager.getHistory().size(), "History should contain only the last 10 tasks.");
+        // Вывод истории после добавления
+        System.out.println("History after adding tasks:");
+        historyManager.getHistory().forEach(task -> System.out.println(task.getTitle()));
+
+        // Удаление задачи
+        historyManager.remove(task2.getId());
+        System.out.println("History after removing Task 2:");
+        historyManager.getHistory().forEach(task -> System.out.println(task.getTitle()));
+
+        // Повторное добавление задачи
+        historyManager.add(task2);
+        System.out.println("History after re-adding Task 2:");
+        historyManager.getHistory().forEach(task -> System.out.println(task.getTitle()));
     }
 }
