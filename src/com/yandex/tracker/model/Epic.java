@@ -1,3 +1,4 @@
+
 package com.yandex.tracker.model;
 
 import com.yandex.tracker.service.TaskStatus;
@@ -18,7 +19,8 @@ public class Epic extends Task {
     }
 
     public void addSubtaskId(int subtaskId) {
-        if (this.getId() == subtaskId) {
+        Integer id = this.getId();
+        if (id != null && id.equals(subtaskId)) {
             throw new IllegalArgumentException("Epic cannot add itself as a subtask.");
         }
         subtaskIds.add(subtaskId);
