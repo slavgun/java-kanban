@@ -33,7 +33,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyMap.put(task.getId(), newNode);
     }
 
-    private void removeNode(Node node) {
+    private void removeNode(Node node) { //добавлено
         if (node == null) return;
 
         if (node.prev != null) {
