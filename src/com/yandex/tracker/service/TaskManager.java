@@ -1,4 +1,5 @@
 package com.yandex.tracker.service;
+import java.util.Map;
 
 import com.yandex.tracker.model.Task;
 import com.yandex.tracker.model.Epic;
@@ -37,15 +38,10 @@ public interface TaskManager {
     List<Subtask> getSubtasksOfEpic(int epicId);// Добавлено
 
     List<Task> getHistory();
-}
-public Map<Integer, Task> getTasks() {
-    return tasks;
-}
 
-public Map<Integer, Epic> getEpics() {
-    return epics;
-}
+    Map<Integer, Task> getTasks();
 
-public Map<Integer, Subtask> getSubtasks() {
-    return subtasks;
+    Map<Integer, Epic> getEpics();
+
+    Map<Integer, Subtask> getSubtasks();
 }

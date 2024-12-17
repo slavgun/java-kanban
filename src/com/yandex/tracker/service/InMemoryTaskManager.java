@@ -7,6 +7,7 @@ import com.yandex.tracker.model.Subtask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -134,6 +135,21 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return result;
+    }
+
+    @Override
+    public Map<Integer, Task> getTasks() {
+        return tasks;
+    }
+
+    @Override
+    public Map<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    @Override
+    public Map<Integer, Subtask> getSubtasks() {
+        return subtasks;
     }
 
     @Override
