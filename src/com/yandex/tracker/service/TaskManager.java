@@ -38,3 +38,14 @@ public interface TaskManager {
 
     List<Task> getHistory();
 }
+public Map<Integer, Task> getTasks() {
+    return tasks;
+}
+
+public Map<Integer, Epic> getEpics() {
+    return epics;
+}
+
+public Map<Integer, Subtask> getSubtasks() {
+    return subtasks;
+}

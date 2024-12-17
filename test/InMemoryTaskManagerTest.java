@@ -15,6 +15,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     public void setUp() {
+        historyManager = Managers.getDefaultHistory();
         taskManager = Managers.getDefault();
     }
 
@@ -102,7 +103,7 @@ class InMemoryTaskManagerTest {
         int epicId = 2;
         Epic epic = new Epic("Test Epic", "Description");
         int subtaskId = 3;
-        Subtask subtask = new Subtask("Test Subtask", TaskStatus.NEW,  "Description", epicId);
+        Subtask subtask = new Subtask("Test Subtask",  "Description", TaskStatus.NEW, epicId);
 
         taskManager.getEpics().put(epicId, epic);
         taskManager.getSubtasks().put(subtaskId, subtask);
@@ -121,7 +122,7 @@ class InMemoryTaskManagerTest {
     @Test
     public void deleteSubtaskById_shouldRemoveSubtaskAndHistory() {
         int subtaskId = 4;
-        Subtask subtask = new Subtask("Test Subtask", TaskStatus.NEW,  "Description", 2);
+        Subtask subtask = new Subtask("Test Subtask",  "Description", TaskStatus.NEW, 2);
         taskManager.getSubtasks().put(subtaskId, subtask);
         historyManager.add(subtask);
 
