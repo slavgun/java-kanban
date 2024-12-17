@@ -6,10 +6,11 @@ import com.yandex.tracker.model.Task;
 import com.yandex.tracker.service.Managers;
 import com.yandex.tracker.service.TaskManager;
 import com.yandex.tracker.service.TaskStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import com.yandex.tracker.service.HistoryManager;
 import com.yandex.tracker.service.InMemoryTaskManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
@@ -88,7 +89,6 @@ class InMemoryTaskManagerTest {
         assertEquals(10, taskManager.getHistory().size(), "History should contain only the last 10 taskManager.getTasks().");
     }
 
-    @Test
     @Test
     public void deleteTaskById_shouldRemoveTaskAndHistory() {
         Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
