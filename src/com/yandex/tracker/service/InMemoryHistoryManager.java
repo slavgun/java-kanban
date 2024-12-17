@@ -31,6 +31,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = newNode;
         }
         historyMap.put(task.getId(), newNode);
+        System.out.println("Added task to history: " + task.getId());
     }
 
     private void removeNode(Node node) {
@@ -51,6 +52,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         // Prevent memory leaks
         node.next = null;
         node.prev = null;
+        System.out.println("Removed task from history: " + node.task.getId());
     }
 
     @Override
@@ -70,6 +72,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (node != null) {
             removeNode(node);
         }
+        System.out.println("Attempted to remove task with ID: " + id);
+        System.out.println("Current history map size: " + historyMap.size());
     }
 
     @Override
@@ -78,6 +82,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         for (Node current = head; current != null; current = current.next) {
             history.add(current.task);
         }
+        System.out.println("Current history size: " + history.size());
         return history;
     }
 }
