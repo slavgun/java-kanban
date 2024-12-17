@@ -50,9 +50,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         // Prevent memory leaks
+        node.task = null;
         node.next = null;
         node.prev = null;
-        System.out.println("Removed task from history: " + node.task.getId());
+        System.out.println("Removed task from history: " + node.task);
     }
 
     @Override
@@ -80,7 +81,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
         for (Node current = head; current != null; current = current.next) {
-            history.add(current.task);
+            if (current.task != null) { // Final check for consistency
+                history.add(current.task);
+            }
         }
         System.out.println("Current history size: " + history.size());
         return history;
