@@ -10,6 +10,8 @@ import com.yandex.tracker.service.HistoryManager;
 import com.yandex.tracker.service.InMemoryTaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
