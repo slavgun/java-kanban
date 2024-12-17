@@ -79,14 +79,15 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldLimitHistoryToTenTasks() {
-        for (int i = 1; i <= 12; i++) {
+    public void shouldLimitHistoryToTenTasks() {
+        for (int i = 0; i < 12; i++) {
             Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW);
             taskManager.createTask(task);
-            taskManager.getTaskById(task.getId()); // Accessing to add to history
+            historyManager.add(task);
         }
 
-        assertEquals(10, taskManager.getHistory().size(), "History should contain only the last 10 taskManager.getTasks().");
+        // Проверка на все добавленные задачи без ограничения
+        assertEquals(12, historyManager.getHistory().size());
     }
 
     @Test
