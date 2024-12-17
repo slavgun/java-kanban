@@ -59,6 +59,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
+        System.out.println("Adding to history: " + task);
         if (task == null) return;
 
         // Remove duplicates

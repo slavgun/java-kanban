@@ -89,6 +89,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteTaskById_shouldRemoveTaskAndHistory() {
+        System.out.println("History before deletion: " + taskManager.getHistory());
         Task task = new Task("Test Task", "Test Description", TaskStatus.NEW);
         taskManager.createTask(task);
         int taskId = task.getId();
