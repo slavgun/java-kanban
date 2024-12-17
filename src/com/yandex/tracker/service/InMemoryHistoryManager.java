@@ -59,6 +59,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
+        if (task == null) return;
+        history.remove(task.getId());
+        history.add(task.getId(), task);
         System.out.println("Adding to history: " + task);
         if (task == null) return;
 
