@@ -37,6 +37,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     private void removeNode(Node node) {
         if (node == null) return; // Safety check
 
+        System.out.println("Removing task from history: " + node.task.getId());
+
         if (node.prev != null) {
             node.prev.next = node.next;
         } else {
@@ -53,7 +55,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         node.task = null;
         node.next = null;
         node.prev = null;
-        System.out.println("Removed task from history: " + node.task);
     }
 
     @Override
