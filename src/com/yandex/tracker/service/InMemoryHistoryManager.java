@@ -31,7 +31,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = newNode;
         }
         historyMap.put(task.getId(), newNode);
-        System.out.println("Added task to history: " + task.getId());
+        System.out.println("Added task to historyMap: " + task.getId());
     }
 
     private void removeNode(Node node) {
@@ -49,7 +49,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = node.prev; // Update tail if necessary
         }
 
-        System.out.println("Removing task from history: " + node.task.getId());
+        System.out.println("Removing task from historyMap: " + node.task.getId());
 
         // Clear references
         node.task = null;
@@ -60,9 +60,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task == null) return;
-        history.remove(task.getId());
-        history.add(task.getId(), task);
-        System.out.println("Adding to history: " + task);
+        historyMap.remove(task.getId());
+        historyMap.put(task.getId(), new Node(task));
+        System.out.println("Adding to historyMap: " + task);
         if (task == null) return;
 
         // Remove duplicates
@@ -81,22 +81,22 @@ public class InMemoryHistoryManager implements HistoryManager {
             removeNode(node); // Clean node completely
             System.out.println("Successfully removed task with ID: " + id);
         } else {
-            System.out.println("Task with ID: " + id + " was not found in history.");
+            System.out.println("Task with ID: " + id + " was not found in historyMap.");
         }
-        System.out.println("Current history map size: " + historyMap.size());
+        System.out.println("Current historyMap map size: " + historyMap.size());
     }
 
     @Override
     public List<Task> getHistory() {
-        List<Task> history = new ArrayList<>();
+        List<Task> historyMap = new ArrayList<>();
         Node current = head;
         while (current != null) {
             if (current.task != null) {
-                history.add(current.task);
+                historyMap.add(current.task);
             }
             current = current.next;
         }
-        System.out.println("Current history size: " + history.size());
-        return history;
+        System.out.println("Current historyMap size: " + historyMap.size());
+        return historyMap;
     }
 }
