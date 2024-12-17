@@ -55,11 +55,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             removeNode(historyMap.get(task.getId()));
         }
         linkLast(task);
-
-        // Добавьте ограничение на 10 задач
-        if (historyMap.size() > 10) {
-            removeNode(head); // Удаляем самую старую задачу (head)
-        }
     }
 
     @Override

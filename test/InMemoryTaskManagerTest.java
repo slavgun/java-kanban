@@ -83,4 +83,51 @@ class InMemoryTaskManagerTest {
 
         assertEquals(10, taskManager.getHistory().size(), "History should contain only the last 10 tasks.");
     }
+
+    @Test
+    public void deleteTaskById_shouldRemoveTaskAndHistory() {
+        int taskId = 1;
+        Task task = new Task("Test Task", "Description");
+        tasks.put(taskId, task);
+        historyManager.add(task);
+
+        deleteTaskById(taskId);
+
+        assertFalse(tasks.containsKey(taskId));
+        assertFalse(historyManager.contains(taskId));
+    }
+
+    @Test
+    public void deleteEpicById_shouldRemoveEpicSubtasksAndHistory() {
+        int epicId = 2;
+        Epic epic = new Epic("Test Epic", "Description");
+        int subtaskId = 3;
+        Subtask subtask = new Subtask("Test Subtask", "Description", epicId);
+
+        epics.put(epicId, epic);
+        subtasks.put(subtaskId, subtask);
+        epic.getSubtaskIds().add(subtaskId);
+        historyManager.add(epic);
+        historyManager.add(subtask);
+
+        deleteEpicById(epicId);
+
+        assertFalse(epics.containsKey(epicId));
+        assertFalse(subtasks.containsKey(subtaskId));
+        assertFalse(historyManager.contains(epicId));
+        assertFalse(historyManager.contains(subtaskId));
+    }
+
+    @Test
+    public void deleteSubtaskById_shouldRemoveSubtaskAndHistory() {
+        int subtaskId = 4;
+        Subtask subtask = new Subtask("Test Subtask", "Description", 2);
+        subtasks.put(subtaskId, subtask);
+        historyManager.add(subtask);
+
+        deleteSubtaskById(subtaskId);
+
+        assertFalse(subtasks.containsKey(subtaskId));
+        assertFalse(historyManager.contains(subtaskId));
+    }
 }
