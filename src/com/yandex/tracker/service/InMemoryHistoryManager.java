@@ -63,6 +63,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         // Remove duplicates
         if (historyMap.containsKey(task.getId())) {
+            System.out.println("Duplicate detected for task ID: " + task.getId());
             remove(task.getId());
         }
         linkLast(task);
@@ -70,11 +71,15 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
+        System.out.println("Attempting to remove task with ID: " + id);
         Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node); // Clean node completely
+            System.out.println("Successfully removed task with ID: " + id);
+        } else {
+            System.out.println("Task with ID: " + id + " was not found in history.");
         }
-        System.out.println("Removed task with ID: " + id);
+        System.out.println("Current history map size: " + historyMap.size());
     }
 
     @Override
