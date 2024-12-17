@@ -12,11 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
+    private HistoryManager historyManager;
 
     @BeforeEach
     public void setUp() {
+        taskManager = new InMemoryTaskManager();
         historyManager = Managers.getDefaultHistory();
-        taskManager = Managers.getDefault();
     }
 
     @Test
@@ -120,15 +121,14 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void deleteSubtaskById_shouldRemoveSubtaskAndHistory() {
-        int subtaskId = 4;
-        Subtask subtask = new Subtask("Test Subtask",  "Description", TaskStatus.NEW, 2);
-        taskManager.getSubtasks().put(subtaskId, subtask);
-        historyManager.add(subtask);
+    public void deleteTaskById_shouldRemoveTaskAndHistory() {
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        taskManager.addTask(task);
+        historyManager.add(task);
 
-        taskManager.deleteSubtaskById(subtaskId);
+        taskManager.deleteTaskById(task.getId());
 
-        assertFalse(taskManager.getSubtasks().containsKey(subtaskId));
-        assertFalse(historyManager.getHistory().contains(subtaskId));
+        assertFalse(taskManager.getTasks().containsKey(task.getId()));
+        assertFalse(historyManager.getHistory().contains(task));
     }
 }
