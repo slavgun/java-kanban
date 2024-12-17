@@ -1,13 +1,8 @@
-package test;
-
 import com.yandex.tracker.model.Epic;
 import com.yandex.tracker.model.Subtask;
 import com.yandex.tracker.model.Task;
-import com.yandex.tracker.service.Managers;
-import com.yandex.tracker.service.TaskManager;
-import com.yandex.tracker.service.TaskStatus;
-import com.yandex.tracker.service.HistoryManager;
-import com.yandex.tracker.service.InMemoryTaskManager;
+
+import com.yandex.tracker.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
