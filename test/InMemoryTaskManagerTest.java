@@ -113,4 +113,24 @@ class InMemoryTaskManagerTest {
                 "Task should be removed from history after deletion.");
         assertEquals(0, historyAfter.size(), "History should be empty after task deletion.");
     }
+
+    // Temporary mock implementation of HistoryManager for testing
+    static class MockHistoryManager implements HistoryManager {
+        private final List<Task> history = new ArrayList<>();
+
+        @Override
+        public void add(Task task) {
+            history.add(task);
+        }
+
+        @Override
+        public void remove(int id) {
+            history.removeIf(task -> task.getId() == id);
+        }
+
+        @Override
+        public List<Task> getHistory() {
+            return new ArrayList<>(history);
+        }
+    }
 }
