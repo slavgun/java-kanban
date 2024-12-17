@@ -33,7 +33,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyMap.put(task.getId(), newNode);
     }
 
-    private void removeNode(Node node) { //добавлено
+    private void removeNode(Node node) {
         if (node == null) return;
 
         if (node.prev != null) {
@@ -46,33 +46,27 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             tail = node.prev;
         }
-        historyMap.remove(node.task.getId());
     }
 
     @Override
     public void add(Task task) {
+        if (task == null) return; // Проверка на null
         if (historyMap.containsKey(task.getId())) {
-            removeNode(historyMap.get(task.getId()));
+            removeNode(historyMap.remove(task.getId()));
         }
         linkLast(task);
     }
 
     @Override
     public void remove(int id) {
-        if (historyMap.containsKey(id)) {
-            removeNode(historyMap.get(id));
-        }
+        removeNode(historyMap.remove(id)); // Упрощённый remove
     }
 
     @Override
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
-
-        Node current = head;
-
-        while (current != null) {
+        for (Node current = head; current != null; current = current.next) {
             history.add(current.task);
-            current = current.next;
         }
         return history;
     }
