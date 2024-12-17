@@ -14,13 +14,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    private final LinkedHashMap<Integer, Node> historyMap = new LinkedHashMap<>();
+    private final Map<Integer, Node> historyMap = new LinkedHashMap<>();
     private Node head;
     private Node tail;
 
     @Override
     public void add(Task task) {
-        System.out.println("Adding task to history: " + task);
         if (task == null) return;
 
         // Remove existing node if present
@@ -32,26 +31,27 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node node = new Node(task);
         historyMap.put(task.getId(), node);
         linkLast(node);
+        System.out.println("Adding task to history: " + task);
     }
 
     @Override
     public void remove(int id) {
-        System.out.println("Removing task with ID from history: " + id);
         Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node);
+            System.out.println("Removing task with ID: " + id);
         }
     }
 
     @Override
     public List<Task> getHistory() {
-        System.out.println("Fetching history...");
         List<Task> history = new ArrayList<>();
         Node current = head;
         while (current != null) {
             history.add(current.task);
             current = current.next;
         }
+        System.out.println("Current history: " + history);
         return history;
     }
 
