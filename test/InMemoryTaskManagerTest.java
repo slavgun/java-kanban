@@ -19,8 +19,8 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     public void setUp() {
+        historyManager = new InMemoryHistoryManager();
         taskManager = new InMemoryTaskManager();
-        historyManager = Managers.getDefaultHistory();
     }
 
     @Test
@@ -105,23 +105,26 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void deleteEpicById_shouldRemoveEpicSubtasksAndHistory() {
-        int epicId = 2;
-        Epic epic = new Epic("Test Epic", "Description");
-        int subtaskId = 3;
-        Subtask subtask = new Subtask("Test Subtask",  "Description", TaskStatus.NEW, epicId);
+    void deleteTaskById_shouldRemoveTaskAndHistory() {
+        Task task = new Task("Test Task", "Test Description", TaskStatus.NEW);
+        taskManager.createTask(task);
+        int taskId = task.getId();
 
-        taskManager.getEpics().put(epicId, epic);
-        taskManager.getSubtasks().put(subtaskId, subtask);
-        epic.getSubtaskIds().add(subtaskId);
-        historyManager.add(epic);
-        historyManager.add(subtask);
+        // Add task to history
+        taskManager.getTaskById(taskId);
+        List<Task> historyBefore = historyManager.getHistory();
+        assertEquals(1, historyBefore.size(), "History should contain the task before deletion.");
 
-        taskManager.deleteEpicById(epicId);
+        // Delete the task
+        taskManager.deleteTaskById(taskId);
 
-        assertFalse(taskManager.getEpics().containsKey(epicId));
-        assertFalse(taskManager.getSubtasks().containsKey(subtaskId));
-        assertFalse(historyManager.getHistory().contains(epicId));
-        assertFalse(historyManager.getHistory().contains(subtaskId));
+        // Check task is removed from TaskManager
+        assertNull(taskManager.getTaskById(taskId), "Task should be removed from TaskManager.");
+
+        // Check history is updated
+        List<Task> historyAfter = historyManager.getHistory();
+        assertFalse(historyAfter.stream().anyMatch(t -> t.getId() == taskId),
+                "Task should be removed from history after deletion.");
+        assertEquals(0, historyAfter.size(), "History should be empty after task deletion.");
     }
 }
