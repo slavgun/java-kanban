@@ -49,7 +49,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = node.prev; // Update tail if necessary
         }
 
-        // Log task before clearing
         System.out.println("Removing task from history: " + node.task.getId());
 
         // Clear references
@@ -62,7 +61,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (task == null) return;
 
-        // Ensure no duplicates by removing existing nodes first
+        // Remove duplicates
         if (historyMap.containsKey(task.getId())) {
             remove(task.getId());
         }
@@ -71,12 +70,11 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node node = historyMap.remove(id); // Remove node from map first
+        Node node = historyMap.remove(id);
         if (node != null) {
-            removeNode(node); // Remove node from linked list
+            removeNode(node); // Clean node completely
         }
-        System.out.println("Attempted to remove task with ID: " + id);
-        System.out.println("Current history map size: " + historyMap.size());
+        System.out.println("Removed task with ID: " + id);
     }
 
     @Override
@@ -84,11 +82,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         List<Task> history = new ArrayList<>();
         Node current = head;
         while (current != null) {
-            if (current.task != null && historyMap.containsKey(current.task.getId())) {
+            if (current.task != null) {
                 history.add(current.task);
-            } else {
-                // Clean invalid nodes from the list
-                removeNode(current);
             }
             current = current.next;
         }
