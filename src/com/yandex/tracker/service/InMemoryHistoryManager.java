@@ -37,6 +37,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private void removeNode(Node node) {
         if (node == null) return; // Safety check
 
+        // Log task before removing
         System.out.println("Removing task from history: " + node.task.getId());
 
         if (node.prev != null) {
@@ -51,7 +52,8 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = node.prev; // Update tail if necessary
         }
 
-        // Prevent memory leaks
+        // Remove references to clear memory
+        historyMap.remove(node.task.getId());
         node.task = null;
         node.next = null;
         node.prev = null;
@@ -70,7 +72,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node node = historyMap.remove(id);
+        Node node = historyMap.get(id);
         if (node != null) {
             removeNode(node);
         }
@@ -82,7 +84,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
         for (Node current = head; current != null; current = current.next) {
-            if (current.task != null) { // Final check for consistency
+            if (current.task != null && historyMap.containsKey(current.task.getId())) {
                 history.add(current.task);
             }
         }
