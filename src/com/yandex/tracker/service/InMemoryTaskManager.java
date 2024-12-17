@@ -91,6 +91,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTaskById(int id) {
         if (tasks.containsKey(id)) {
             historyManager.add(tasks.get(id));
+            System.out.println("Task added to history before deletion: " + tasks.get(id));
+        }
+        if (tasks.containsKey(id)) {
+            historyManager.add(tasks.get(id));
         }
         if (tasks.containsKey(id)) {
             tasks.remove(id);
