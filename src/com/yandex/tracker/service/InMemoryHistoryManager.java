@@ -59,7 +59,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        removeNode(historyMap.remove(id)); // Упрощённый remove
+        Node node = historyMap.remove(id);
+        if (node != null) {
+            removeNode(node); // Удаление узла из двусвязного списка
+        }
     }
 
     @Override
