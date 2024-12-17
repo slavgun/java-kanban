@@ -1,8 +1,6 @@
-
 package com.yandex.tracker.service;
 
 import com.yandex.tracker.model.Task;
-
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
@@ -22,6 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
+        System.out.println("Adding task to history: " + task);
         if (task == null) return;
 
         // Remove existing node if present
@@ -37,6 +36,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
+        System.out.println("Removing task with ID from history: " + id);
         Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node);
@@ -45,6 +45,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
+        System.out.println("Fetching history...");
         List<Task> history = new ArrayList<>();
         Node current = head;
         while (current != null) {
