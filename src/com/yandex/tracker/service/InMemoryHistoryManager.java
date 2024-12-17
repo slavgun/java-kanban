@@ -34,17 +34,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void removeNode(Node node) {
-        if (node == null) return;
-
         if (node.prev != null) {
             node.prev.next = node.next;
         } else {
-            head = node.next;
+            head = node.next; // Обновляем голову
         }
+
         if (node.next != null) {
             node.next.prev = node.prev;
         } else {
-            tail = node.prev;
+            tail = node.prev; // Обновляем хвост
         }
     }
 
