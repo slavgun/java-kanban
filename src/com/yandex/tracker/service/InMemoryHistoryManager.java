@@ -34,24 +34,32 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void removeNode(Node node) {
+        if (node == null) return; // Safety check
+
         if (node.prev != null) {
             node.prev.next = node.next;
         } else {
-            head = node.next; // Обновляем голову
+            head = node.next; // Update head if necessary
         }
 
         if (node.next != null) {
             node.next.prev = node.prev;
         } else {
-            tail = node.prev; // Обновляем хвост
+            tail = node.prev; // Update tail if necessary
         }
+
+        // Prevent memory leaks
+        node.next = null;
+        node.prev = null;
     }
 
     @Override
     public void add(Task task) {
-        if (task == null) return; // Проверка на null
+        if (task == null) return;
+
+        // Ensure no duplicates by removing existing nodes first
         if (historyMap.containsKey(task.getId())) {
-            removeNode(historyMap.remove(task.getId()));
+            remove(task.getId());
         }
         linkLast(task);
     }
@@ -60,7 +68,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         Node node = historyMap.remove(id);
         if (node != null) {
-            removeNode(node); // Удаление узла из двусвязного списка
+            removeNode(node);
         }
     }
 
