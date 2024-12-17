@@ -91,20 +91,6 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void deleteTaskById_shouldRemoveTaskAndHistory() {
-        Task task = new Task("Task 1", "Description", TaskStatus.NEW);
-        taskManager.createTask(task);
-        historyManager.add(task);
-
-        taskManager.deleteTaskById(task.getId());
-
-        // Проверка, что задача удалена из менеджера задач
-        assertFalse(taskManager.getTasks().containsKey(task.getId()));
-        // Проверка, что задача удалена из истории
-        assertFalse(historyManager.getHistory().contains(task));
-    }
-
-    @Test
     void deleteTaskById_shouldRemoveTaskAndHistory() {
         Task task = new Task("Test Task", "Test Description", TaskStatus.NEW);
         taskManager.createTask(task);
