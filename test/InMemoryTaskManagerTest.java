@@ -20,7 +20,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldAddTaskAndRetrieveById() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, TaskStatus.NEW);
         taskManager.createTask(task);
 
         Task retrievedTask = taskManager.getTaskById(task.getId());
@@ -30,7 +30,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldUpdateTask() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, TaskStatus.NEW);
         taskManager.createTask(task);
 
         task.setTitle("Updated Task 1");
@@ -55,7 +55,7 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Epic 1", "Description 1");
         taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
+        Subtask subtask = new Subtask("Subtask 1", TaskStatus.NEW,  "Description 1", TaskStatus.NEW, epic.getId());
         taskManager.createSubtask(subtask);
 
         assertEquals(1, taskManager.getSubtasksOfEpic(epic.getId()).size(), "Epic should have one subtask.");
@@ -63,7 +63,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldMaintainHistory() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, TaskStatus.NEW);
         taskManager.createTask(task);
 
         // Access the task to add it to history
@@ -76,7 +76,7 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldLimitHistoryToTenTasks() {
         for (int i = 1; i <= 12; i++) {
-            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW);
+            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW, TaskStatus.NEW);
             taskManager.createTask(task);
             taskManager.getTaskById(task.getId()); // Accessing to add to history
         }
@@ -87,7 +87,7 @@ class InMemoryTaskManagerTest {
     @Test
     public void deleteTaskById_shouldRemoveTaskAndHistory() {
         int taskId = 1;
-        Task task = new Task("Test Task", "Description");
+        Task task = new Task("Test Task", "Description", TaskStatus.NEW);
         tasks.put(taskId, task);
         historyManager.add(task);
 
@@ -102,7 +102,7 @@ class InMemoryTaskManagerTest {
         int epicId = 2;
         Epic epic = new Epic("Test Epic", "Description");
         int subtaskId = 3;
-        Subtask subtask = new Subtask("Test Subtask", "Description", epicId);
+        Subtask subtask = new Subtask("Test Subtask", TaskStatus.NEW,  "Description", epicId);
 
         epics.put(epicId, epic);
         subtasks.put(subtaskId, subtask);
@@ -121,7 +121,7 @@ class InMemoryTaskManagerTest {
     @Test
     public void deleteSubtaskById_shouldRemoveSubtaskAndHistory() {
         int subtaskId = 4;
-        Subtask subtask = new Subtask("Test Subtask", "Description", 2);
+        Subtask subtask = new Subtask("Test Subtask", TaskStatus.NEW,  "Description", 2);
         subtasks.put(subtaskId, subtask);
         historyManager.add(subtask);
 
