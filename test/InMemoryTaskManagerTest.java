@@ -8,6 +8,8 @@ import com.yandex.tracker.service.TaskManager;
 import com.yandex.tracker.service.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.yandex.tracker.service.HistoryManager;
+import com.yandex.tracker.service.InMemoryTaskManager;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
@@ -87,16 +89,16 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    @Test
     public void deleteTaskById_shouldRemoveTaskAndHistory() {
-        int taskId = 1;
-        Task task = new Task("Test Task", "Description", TaskStatus.NEW);
-        taskManager.getTasks().put(taskId, task);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        taskManager.createTask(task); // Заменено на createTask
         historyManager.add(task);
 
-        taskManager.deleteTaskById(taskId);
+        taskManager.deleteTaskById(task.getId());
 
-        assertFalse(taskManager.getTasks().containsKey(taskId));
-        assertFalse(historyManager.getHistory().contains(taskId));
+        assertFalse(taskManager.getTasks().containsKey(task.getId()));
+        assertFalse(historyManager.getHistory().contains(task));
     }
 
     @Test
@@ -118,17 +120,5 @@ class InMemoryTaskManagerTest {
         assertFalse(taskManager.getSubtasks().containsKey(subtaskId));
         assertFalse(historyManager.getHistory().contains(epicId));
         assertFalse(historyManager.getHistory().contains(subtaskId));
-    }
-
-    @Test
-    public void deleteTaskById_shouldRemoveTaskAndHistory() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        taskManager.addTask(task);
-        historyManager.add(task);
-
-        taskManager.deleteTaskById(task.getId());
-
-        assertFalse(taskManager.getTasks().containsKey(task.getId()));
-        assertFalse(historyManager.getHistory().contains(task));
     }
 }
