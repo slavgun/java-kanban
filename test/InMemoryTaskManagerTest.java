@@ -20,7 +20,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldAddTaskAndRetrieveById() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, TaskStatus.NEW);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
         taskManager.createTask(task);
 
         Task retrievedTask = taskManager.getTaskById(task.getId());
@@ -30,7 +30,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldUpdateTask() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, TaskStatus.NEW);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
         taskManager.createTask(task);
 
         task.setTitle("Updated Task 1");
@@ -55,7 +55,7 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Epic 1", "Description 1");
         taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Subtask 1", TaskStatus.NEW,  "Description 1", TaskStatus.NEW, epic.getId());
+        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
         taskManager.createSubtask(subtask);
 
         assertEquals(1, taskManager.getSubtasksOfEpic(epic.getId()).size(), "Epic should have one subtask.");
@@ -63,7 +63,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldMaintainHistory() {
-        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, TaskStatus.NEW);
+        Task task = new Task("Task 1", "Description 1", TaskStatus.NEW);
         taskManager.createTask(task);
 
         // Access the task to add it to history
@@ -76,25 +76,25 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldLimitHistoryToTenTasks() {
         for (int i = 1; i <= 12; i++) {
-            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW, TaskStatus.NEW);
+            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW);
             taskManager.createTask(task);
             taskManager.getTaskById(task.getId()); // Accessing to add to history
         }
 
-        assertEquals(10, taskManager.getHistory().size(), "History should contain only the last 10 tasks.");
+        assertEquals(10, taskManager.getHistory().size(), "History should contain only the last 10 taskManager.getTasks().");
     }
 
     @Test
     public void deleteTaskById_shouldRemoveTaskAndHistory() {
         int taskId = 1;
         Task task = new Task("Test Task", "Description", TaskStatus.NEW);
-        tasks.put(taskId, task);
+        taskManager.getTasks().put(taskId, task);
         historyManager.add(task);
 
-        deleteTaskById(taskId);
+        taskManager.deleteTaskById(taskId);
 
-        assertFalse(tasks.containsKey(taskId));
-        assertFalse(historyManager.contains(taskId));
+        assertFalse(taskManager.getTasks().containsKey(taskId));
+        assertFalse(historyManager.getHistory().contains(taskId));
     }
 
     @Test
@@ -104,30 +104,30 @@ class InMemoryTaskManagerTest {
         int subtaskId = 3;
         Subtask subtask = new Subtask("Test Subtask", TaskStatus.NEW,  "Description", epicId);
 
-        epics.put(epicId, epic);
-        subtasks.put(subtaskId, subtask);
+        taskManager.getEpics().put(epicId, epic);
+        taskManager.getSubtasks().put(subtaskId, subtask);
         epic.getSubtaskIds().add(subtaskId);
         historyManager.add(epic);
         historyManager.add(subtask);
 
-        deleteEpicById(epicId);
+        taskManager.deleteEpicById(epicId);
 
-        assertFalse(epics.containsKey(epicId));
-        assertFalse(subtasks.containsKey(subtaskId));
-        assertFalse(historyManager.contains(epicId));
-        assertFalse(historyManager.contains(subtaskId));
+        assertFalse(taskManager.getEpics().containsKey(epicId));
+        assertFalse(taskManager.getSubtasks().containsKey(subtaskId));
+        assertFalse(historyManager.getHistory().contains(epicId));
+        assertFalse(historyManager.getHistory().contains(subtaskId));
     }
 
     @Test
     public void deleteSubtaskById_shouldRemoveSubtaskAndHistory() {
         int subtaskId = 4;
         Subtask subtask = new Subtask("Test Subtask", TaskStatus.NEW,  "Description", 2);
-        subtasks.put(subtaskId, subtask);
+        taskManager.getSubtasks().put(subtaskId, subtask);
         historyManager.add(subtask);
 
-        deleteSubtaskById(subtaskId);
+        taskManager.deleteSubtaskById(subtaskId);
 
-        assertFalse(subtasks.containsKey(subtaskId));
-        assertFalse(historyManager.contains(subtaskId));
+        assertFalse(taskManager.getSubtasks().containsKey(subtaskId));
+        assertFalse(historyManager.getHistory().contains(subtaskId));
     }
 }
