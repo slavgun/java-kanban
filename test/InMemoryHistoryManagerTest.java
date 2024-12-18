@@ -1,4 +1,3 @@
-package test;
 
 import com.yandex.tracker.model.Task;
 import com.yandex.tracker.service.InMemoryHistoryManager;
@@ -19,17 +18,14 @@ class InMemoryHistoryManagerTest {
         historyManager.add(task3);
 
         // Вывод истории после добавления
-        System.out.println("History after adding tasks:");
         historyManager.getHistory().forEach(task -> System.out.println(task.getTitle()));
 
         // Удаление задачи
         historyManager.remove(task2.getId());
-        System.out.println("History after removing Task 2:");
         historyManager.getHistory().forEach(task -> System.out.println(task.getTitle()));
 
         // Повторное добавление задачи
         historyManager.add(task2);
-        System.out.println("History after re-adding Task 2:");
         historyManager.getHistory().forEach(task -> System.out.println(task.getTitle()));
     }
 }

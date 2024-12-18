@@ -7,14 +7,23 @@ public class Subtask extends Task {
 
     public Subtask(String title, String description, TaskStatus status, int epicId) {
         super(title, description, status);
+        Integer id = this.getId();
+        if (id != null && id.equals(epicId)) {
+            throw new IllegalArgumentException("Subtask cannot be its own epic.");
+        }
         this.epicId = epicId;
     }
+
 
     public int getEpicId() {
         return epicId;
     }
 
     public void setEpicId(int epicId) {
+        Integer id = this.getId();
+        if (id != null && id.equals(epicId)) {
+            throw new IllegalArgumentException("Subtask cannot be its own epic.");
+        }
         this.epicId = epicId;
     }
 

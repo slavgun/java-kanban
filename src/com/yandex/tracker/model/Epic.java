@@ -18,8 +18,13 @@ public class Epic extends Task {
     }
 
     public void addSubtaskId(int subtaskId) {
+        Integer id = this.getId();
+        if (id != null && id.equals(subtaskId)) {
+            throw new IllegalArgumentException("Epic cannot add itself as a subtask.");
+        }
         subtaskIds.add(subtaskId);
     }
+
 
     public void removeSubtaskId(int subtaskId) {
         subtaskIds.remove((Integer) subtaskId);

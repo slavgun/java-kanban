@@ -4,76 +4,75 @@ import com.yandex.tracker.model.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
-    private final Map<Integer, Node> historyMap = new HashMap<>();
-    private Node head;
-    private Node tail;
-
     private static class Node {
         Task task;
         Node next;
         Node prev;
 
-        public Node(Task task) {
+        Node(Task task) {
             this.task = task;
         }
     }
 
-    private void linkLast(Task task) {
-        Node newNode = new Node(task);
-
-        if (tail == null) {
-            head = newNode;
-            tail = newNode;
-        } else {
-            tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
-        }
-        historyMap.put(task.getId(), newNode);
-    }
-
-    private void removeNode(Node node) {
-        if (node == null) return;
-
-        if (node.prev != null) {
-            node.prev.next = node.next;
-        } else {
-            head = node.next;
-        }
-        if (node.next != null) {
-            node.next.prev = node.prev;
-        } else {
-            tail = node.prev;
-        }
-        historyMap.remove(node.task.getId());
-    }
+    private final Map<Integer, Node> historyMap = new LinkedHashMap<>();
+    private Node head;
+    private Node tail;
 
     @Override
     public void add(Task task) {
+        if (task == null) return;
+
+        // Перемещаем существующий узел в конец списка
         if (historyMap.containsKey(task.getId())) {
             removeNode(historyMap.get(task.getId()));
         }
-        linkLast(task);
+
+        // Создаем и добавляем новый узел
+        Node node = new Node(task);
+        linkLast(node);
+        historyMap.put(task.getId(), node);
     }
 
     @Override
     public void remove(int id) {
-        if (historyMap.containsKey(id)) {
-            removeNode(historyMap.get(id));
+        Node node = historyMap.remove(id);
+        if (node != null) {
+            removeNode(node);
         }
     }
 
     @Override
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
-
         Node current = head;
-
         while (current != null) {
             history.add(current.task);
             current = current.next;
         }
         return history;
+    }
+
+    private void linkLast(Node node) {
+        if (tail != null) {
+            tail.next = node;
+            node.prev = tail;
+        } else {
+            head = node;
+        }
+        tail = node;
+    }
+
+    private void removeNode(Node node) {
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        } else {
+            head = node.next;
+        }
+
+        if (node.next != null) {
+            node.next.prev = node.prev;
+        } else {
+            tail = node.prev;
+        }
     }
 }

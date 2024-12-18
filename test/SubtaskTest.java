@@ -1,4 +1,3 @@
-package test;
 
 import com.yandex.tracker.model.Subtask;
 import com.yandex.tracker.service.TaskStatus;
@@ -9,10 +8,11 @@ class SubtaskTest {
 
     @Test
     void subtaskShouldNotBeItsOwnEpic() {
-        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, 0);
+        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, 1);
+        subtask.setId(1); // Устанавливаем ID
         assertThrows(IllegalArgumentException.class, () -> {
-            subtask.setEpicId(subtask.getId()); // Trying to set itself as its own epic
-        }, "Subtask cannot be its own epic.");
+            subtask.setEpicId(1); // Пробуем установить себя как epicId
+        });
     }
 
     @Test
