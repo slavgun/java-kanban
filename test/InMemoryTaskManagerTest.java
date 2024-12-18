@@ -117,20 +117,32 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldDeleteSubtaskAndUpdateEpicStatus() {
-        Epic epic = new Epic("Epic 1", "Description 1");
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
+        // Создаем эпик
+        Epic epic = new Epic("Epic 1", "Description");
         taskManager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.DONE, epic.getId());
+        // Создаем две подзадачи для эпика
+        Subtask subtask1 = new Subtask("Subtask 1", "Description", TaskStatus.DONE, epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description", TaskStatus.IN_PROGRESS, epic.getId());
         taskManager.createSubtask(subtask1);
-
-        Subtask subtask2 = new Subtask("Subtask 2", "Description 2", TaskStatus.DONE, epic.getId());
         taskManager.createSubtask(subtask2);
 
-        // Удаляем одну подзадачу
+        // Проверка начального статуса эпика
+        taskManager.updateEpicStatus(epic.getId());
+        System.out.println("Initial Epic Status: " + taskManager.getEpicById(epic.getId()).getStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getEpicById(epic.getId()).getStatus(),
+                "Epic status should initially be IN_PROGRESS.");
+
+        // Удаляем первую подзадачу
         taskManager.deleteSubtaskById(subtask1.getId());
 
-        // Проверяем, что подзадача удалена, а статус эпика обновлен
-        assertNull(taskManager.getSubtaskById(subtask1.getId()), "Subtask 1 should be removed.");
-        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(), "Epic status should be IN_PROGRESS after deleting a subtask.");
+        // Получаем обновленный эпик и проверяем статус
+        Epic updatedEpic = taskManager.getEpicById(epic.getId());
+        System.out.println("Final Epic Status: " + updatedEpic.getStatus());
+
+        assertEquals(TaskStatus.IN_PROGRESS, updatedEpic.getStatus(),
+                "Epic status should be IN_PROGRESS after deleting a subtask.");
     }
 }

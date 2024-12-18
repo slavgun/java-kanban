@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -51,23 +52,30 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(epicId);
         if (epic == null) return;
 
-        List<Subtask> epicSubtasks = getSubtasksOfEpic(epicId);
+        List<Subtask> subtasksOfEpic = subtasks.values().stream()
+                .filter(subtask -> subtask.getEpicId() == epicId)
+                .collect(Collectors.toList());
 
-        if (epicSubtasks.isEmpty()) {
+        if (subtasksOfEpic.isEmpty()) {
+            epic.setStatus(TaskStatus.NEW);
+            return;
+        }
+
+        boolean allDone = subtasksOfEpic.stream()
+                .allMatch(subtask -> subtask.getStatus() == TaskStatus.DONE);
+        boolean allNew = subtasksOfEpic.stream()
+                .allMatch(subtask -> subtask.getStatus() == TaskStatus.NEW);
+
+        // Исправленная логика
+        if (allDone) {
+            epic.setStatus(TaskStatus.DONE);
+        } else if (allNew) {
             epic.setStatus(TaskStatus.NEW);
         } else {
-            boolean allDone = epicSubtasks.stream().allMatch(subtask -> subtask.getStatus() == TaskStatus.DONE);
-            boolean allNew = epicSubtasks.stream().allMatch(subtask -> subtask.getStatus() == TaskStatus.NEW);
-
-            if (allDone) {
-                epic.setStatus(TaskStatus.DONE);
-            } else if (allNew) {
-                epic.setStatus(TaskStatus.NEW);
-            } else {
-                epic.setStatus(TaskStatus.IN_PROGRESS);
-            }
+            epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
+
 
     @Override
     public Map<Integer, Task> getTasks() {
@@ -134,12 +142,8 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtaskById(int id) {
         Subtask subtask = subtasks.remove(id);
         if (subtask != null) {
-            Epic epic = epics.get(subtask.getEpicId());
-            if (epic != null) {
-                epic.getSubtaskIds().remove(Integer.valueOf(id));
-                updateEpicStatus(epic.getId());
-            }
             historyManager.remove(id);
+            updateEpicStatus(subtask.getEpicId());
         }
     }
 
