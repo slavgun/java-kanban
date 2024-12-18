@@ -22,15 +22,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (task == null) return;
 
-        // Remove existing node if present
+        // If node already exists, remove it and move to end
         if (historyMap.containsKey(task.getId())) {
-            remove(task.getId());
+            removeNode(historyMap.get(task.getId()));
         }
 
         // Create and link new node
         Node node = new Node(task);
-        historyMap.put(task.getId(), node);
         linkLast(node);
+        historyMap.put(task.getId(), node);
     }
 
     @Override
@@ -38,7 +38,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node);
-            System.out.println("Removing task with ID: " + id);
         }
     }
 
@@ -50,7 +49,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.add(current.task);
             current = current.next;
         }
-        System.out.println("Current history: " + history);
         return history;
     }
 
