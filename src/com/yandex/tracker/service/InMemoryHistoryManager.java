@@ -31,7 +31,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node node = new Node(task);
         historyMap.put(task.getId(), node);
         linkLast(node);
-        System.out.println("Adding task to history: " + task);
     }
 
     @Override
