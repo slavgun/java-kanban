@@ -1,22 +1,18 @@
 import com.yandex.tracker.model.Epic;
 import com.yandex.tracker.model.Subtask;
 import com.yandex.tracker.model.Task;
-
 import com.yandex.tracker.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
-    private HistoryManager historyManager;
 
     @BeforeEach
     public void setUp() {
-        historyManager = new MockHistoryManager();
         taskManager = new InMemoryTaskManager();
     }
 
@@ -76,27 +72,14 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldLimitHistoryToTenTasks() {
-        for (int i = 0; i < 12; i++) {
-            Task task = new Task("Task " + i, "Description " + i, TaskStatus.NEW);
-            taskManager.createTask(task);
-            historyManager.add(task);
-        }
-
-        // Проверка на все добавленные задачи без ограничения
-        assertEquals(12, historyManager.getHistory().size());
-    }
-
-    @Test
     void deleteTaskById_shouldRemoveTaskAndHistory() {
-        System.out.println("History before deletion: " + taskManager.getHistory());
         Task task = new Task("Test Task", "Test Description", TaskStatus.NEW);
         taskManager.createTask(task);
         int taskId = task.getId();
 
         // Add task to history
         taskManager.getTaskById(taskId);
-        List<Task> historyBefore = historyManager.getHistory();
+        List<Task> historyBefore = taskManager.getHistory();
         assertEquals(1, historyBefore.size(), "History should contain the task before deletion.");
 
         // Delete the task
@@ -106,29 +89,9 @@ class InMemoryTaskManagerTest {
         assertNull(taskManager.getTaskById(taskId), "Task should be removed from TaskManager.");
 
         // Check history is updated
-        List<Task> historyAfter = historyManager.getHistory();
+        List<Task> historyAfter = taskManager.getHistory();
         assertFalse(historyAfter.stream().anyMatch(t -> t.getId() == taskId),
                 "Task should be removed from history after deletion.");
         assertEquals(0, historyAfter.size(), "History should be empty after task deletion.");
-    }
-
-    // Temporary mock implementation of HistoryManager for testing
-    static class MockHistoryManager implements HistoryManager {
-        private final List<Task> history = new ArrayList<>();
-
-        @Override
-        public void add(Task task) {
-            history.add(task);
-        }
-
-        @Override
-        public void remove(int id) {
-            history.removeIf(task -> task.getId() == id);
-        }
-
-        @Override
-        public List<Task> getHistory() {
-            return new ArrayList<>(history);
-        }
     }
 }

@@ -25,7 +25,8 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task task) {
         int id = generateId();
         task.setId(id);
-        tasks.put(task.getId(), task);
+        tasks.put(id, task);
+        historyManager.add(task);
     }
 
     @Override
@@ -87,11 +88,11 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(subtasks.values());
     }
 
+    @Override
     public void deleteTaskById(int id) {
         if (tasks.containsKey(id)) {
+            historyManager.remove(id); // Удаляем из истории
             tasks.remove(id);
-            historyManager.remove(id); // Удалить из истории
-            System.out.println("Task removed with ID: " + id);
         }
     }
 

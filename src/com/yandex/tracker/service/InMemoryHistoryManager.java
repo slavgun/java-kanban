@@ -22,12 +22,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (task == null) return;
 
-        // If node already exists, remove it and move to end
+        // Перемещаем существующий узел в конец списка
         if (historyMap.containsKey(task.getId())) {
             removeNode(historyMap.get(task.getId()));
         }
 
-        // Create and link new node
+        // Создаем и добавляем новый узел
         Node node = new Node(task);
         linkLast(node);
         historyMap.put(task.getId(), node);
@@ -38,6 +38,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node);
+            System.out.println("Task removed from history with ID: " + id);
+        } else {
+            System.out.println("Attempted to remove task not in history with ID: " + id);
         }
     }
 
@@ -49,6 +52,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.add(current.task);
             current = current.next;
         }
+        System.out.println("Current history: " + history);
         return history;
     }
 
