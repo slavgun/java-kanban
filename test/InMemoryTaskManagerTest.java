@@ -94,4 +94,43 @@ class InMemoryTaskManagerTest {
                 "Task should be removed from history after deletion.");
         assertEquals(0, historyAfter.size(), "History should be empty after task deletion.");
     }
+
+    @Test
+    void shouldDeleteEpicAndItsSubtasks() {
+        Epic epic = new Epic("Epic 1", "Description 1");
+        taskManager.createEpic(epic);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
+        taskManager.createSubtask(subtask1);
+
+        Subtask subtask2 = new Subtask("Subtask 2", "Description 2", TaskStatus.NEW, epic.getId());
+        taskManager.createSubtask(subtask2);
+
+        // Удаляем эпик
+        taskManager.deleteEpicById(epic.getId());
+
+        // Проверяем, что эпик и подзадачи удалены
+        assertNull(taskManager.getEpicById(epic.getId()), "Epic should be removed.");
+        assertNull(taskManager.getSubtaskById(subtask1.getId()), "Subtask 1 should be removed.");
+        assertNull(taskManager.getSubtaskById(subtask2.getId()), "Subtask 2 should be removed.");
+    }
+
+    @Test
+    void shouldDeleteSubtaskAndUpdateEpicStatus() {
+        Epic epic = new Epic("Epic 1", "Description 1");
+        taskManager.createEpic(epic);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.DONE, epic.getId());
+        taskManager.createSubtask(subtask1);
+
+        Subtask subtask2 = new Subtask("Subtask 2", "Description 2", TaskStatus.DONE, epic.getId());
+        taskManager.createSubtask(subtask2);
+
+        // Удаляем одну подзадачу
+        taskManager.deleteSubtaskById(subtask1.getId());
+
+        // Проверяем, что подзадача удалена, а статус эпика обновлен
+        assertNull(taskManager.getSubtaskById(subtask1.getId()), "Subtask 1 should be removed.");
+        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(), "Epic status should be IN_PROGRESS after deleting a subtask.");
+    }
 }

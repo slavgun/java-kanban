@@ -38,9 +38,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node);
-            System.out.println("Task removed from history with ID: " + id);
-        } else {
-            System.out.println("Attempted to remove task not in history with ID: " + id);
         }
     }
 
@@ -52,7 +49,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.add(current.task);
             current = current.next;
         }
-        System.out.println("Current history: " + history);
         return history;
     }
 

@@ -3,7 +3,6 @@ package com.yandex.tracker.service;
 import com.yandex.tracker.model.Task;
 import com.yandex.tracker.model.Epic;
 import com.yandex.tracker.model.Subtask;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,11 +39,41 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask subtask) {
         subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
+
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
             epic.addSubtaskId(subtask.getId());
+            updateEpicStatus(epic.getId());
         }
     }
+
+    public void updateEpicStatus(int epicId) {
+        Epic epic = epics.get(epicId);
+        if (epic == null) return;
+
+        List<Subtask> epicSubtasks = getSubtasksOfEpic(epicId);
+
+        if (epicSubtasks.isEmpty()) {
+            epic.setStatus(TaskStatus.NEW);
+        } else {
+            boolean allDone = epicSubtasks.stream().allMatch(subtask -> subtask.getStatus() == TaskStatus.DONE);
+            boolean allNew = epicSubtasks.stream().allMatch(subtask -> subtask.getStatus() == TaskStatus.NEW);
+
+            if (allDone) {
+                epic.setStatus(TaskStatus.DONE);
+            } else if (allNew) {
+                epic.setStatus(TaskStatus.NEW);
+            } else {
+                epic.setStatus(TaskStatus.IN_PROGRESS);
+            }
+        }
+    }
+
+    @Override
+    public Map<Integer, Task> getTasks() {
+        return tasks;
+    }
+
 
     @Override
     public Task getTaskById(int id) {
@@ -74,6 +103,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public Map<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    @Override
     public List<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
     }
@@ -96,22 +130,38 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void deleteEpicById(int id) {
-        // Удаляем все подзадачи эпика из истории
-        if (epics.containsKey(id)) {
-            for (Integer subtaskId : epics.get(id).getSubtaskIds()) {
-                subtasks.remove(subtaskId);
-                historyManager.remove(subtaskId); // Удаляем подзадачи из истории
+    @Override
+    public void deleteSubtaskById(int id) {
+        Subtask subtask = subtasks.remove(id);
+        if (subtask != null) {
+            Epic epic = epics.get(subtask.getEpicId());
+            if (epic != null) {
+                epic.getSubtaskIds().remove(Integer.valueOf(id));
+                updateEpicStatus(epic.getId());
             }
-            epics.remove(id);
-            historyManager.remove(id); // Удаляем эпик из истории
+            historyManager.remove(id);
         }
     }
 
+
     @Override
-    public void deleteSubtaskById(int id) {
-        subtasks.remove(id);
-        historyManager.remove(id); // Удаляем подзадачу из истории
+    public Map<Integer, Subtask> getSubtasks() {
+        return subtasks;
+    }
+
+    @Override
+    public void deleteEpicById(int id) {
+        if (epics.containsKey(id)) {
+            // Удаляем все подзадачи эпика из истории и мапы
+            for (int subtaskId : epics.get(id).getSubtaskIds()) {
+                historyManager.remove(subtaskId); // Удаляем подзадачу из истории
+                subtasks.remove(subtaskId);       // Удаляем подзадачу из мапы
+            }
+
+            // Удаляем сам эпик
+            historyManager.remove(id); // Удаляем эпик из истории
+            epics.remove(id);
+        }
     }
 
     @Override
@@ -125,8 +175,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask) {
         if (subtasks.containsKey(subtask.getId())) {
             subtasks.put(subtask.getId(), subtask);
+            updateEpicStatus(subtask.getEpicId());
         }
     }
+
 
     @Override
     public List<Subtask> getSubtasksOfEpic(int epicId) {
@@ -138,21 +190,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return result;
-    }
-
-    @Override
-    public Map<Integer, Task> getTasks() {
-        return tasks;
-    }
-
-    @Override
-    public Map<Integer, Epic> getEpics() {
-        return epics;
-    }
-
-    @Override
-    public Map<Integer, Subtask> getSubtasks() {
-        return subtasks;
     }
 
     @Override

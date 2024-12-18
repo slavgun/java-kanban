@@ -1,4 +1,3 @@
-
 package com.yandex.tracker.model;
 
 import com.yandex.tracker.service.TaskStatus;
@@ -9,9 +8,7 @@ public class Subtask extends Task {
     public Subtask(String title, String description, TaskStatus status, int epicId) {
         super(title, description, status);
         Integer id = this.getId();
-        System.out.println("Subtask ID: " + id + ", Epic ID: " + epicId);
         if (id != null && id.equals(epicId)) {
-            System.out.println("Throwing exception: Subtask cannot be its own epic.");
             throw new IllegalArgumentException("Subtask cannot be its own epic.");
         }
         this.epicId = epicId;
